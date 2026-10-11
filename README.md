@@ -1,3 +1,21 @@
+# ClientMod ESP (این فورک)
+
+ابزار قابل اجرای **همین بازی** (CMLauncher / clientmod_game.dll) فایل پایتون است، نه باینری CS2.
+
+- اسکریپت: [`python/clientmod_esp.py`](python/clientmod_esp.py)
+- افست‌ها: PlayerResource، موقعیت خودت، yaw/pitch، آرایه بازیکن `0x26B2364`، زنجیره HP کلاینت
+- رابط: اتصال، انتخاب خودت، اسکن، ESP، اسلایدر کالیبره (FOV / EyeZ / قد / متر / Yaw / Pitch)
+
+```bat
+python clientmod_esp.py
+```
+
+باید **Run as administrator** باشد و بازی داخل مپ باشد. حالت پیش‌فرض `W2S=cam` و `Players=both`.
+
+کد C++ پایین همین ریپو مخصوص Counter-Strike 2 است و با عوض کردن چند عدد افست روی کلاینت‌مود اجرا نمی‌شود. برای این بازی از پایتون بالا استفاده کن.
+
+---
+
 # 🕹️ CS2 External ESP | Recode
 
 Simple external ESP for Counter-Strike 2. After years of development the codebase has been modernized for clarity and ease of use, featuring a redesigned interface, noticeable performance improvements, several quality-of-life additions, and automatic offset scanning to help maintain compatibility through game updates.
