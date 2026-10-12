@@ -3,19 +3,10 @@
     https://creativecommons.org/licenses/by-nc/4.0*
 
     You are free to:
-    • Share: Copy and redistribute the material in any medium or format.
-    • Adapt: Remix, transform, and build upon the material*
+    Share, Adapt under Attribution and Non-Commercial terms.
+    See LICENSE for full details.
 
-    Under the following terms:
-    • Attribution: You must give appropriate credit, provide a link to the original source repository, and indicate if changes were made.
-    • Non-Commercial: You may not use the material for commercial purposes*
-
-    You are not allowed to:
-    • Sell: This license forbids selling original or modified material for commercial purposes.
-    • Sublicense: This license forbids sublicensing original or modified material.
-
-    © Copyright by IMXNOOBX (https://github.com/IMXNOOBX) and contributors.
-    See https://github.com/IMXNOOBX/cs2-external-esp/-/blob/main/LICENSE for full details.
+    (c) IMXNOOBX and contributors; ClientMod fork adaptations.
 */
 
 #include <iostream>
@@ -32,9 +23,8 @@ int main()
 
     LogHelper::Init();
 
-    LOGF(INFO, "Compiled {}, Welcome to cs2-external-esp-recode!", __TIMESTAMP__);
+    LOGF(INFO, "Compiled {}, ClientMod ESP", __TIMESTAMP__);
 
-    // Needs to be ran as ADMINISTRATOR
     if (!SetPriorityClass(GetCurrentProcess(), HIGH_PRIORITY_CLASS))
         LOGF(WARNING, "Could not set application process priority to HIGH");
 
@@ -56,7 +46,6 @@ int main()
 
     LOGF(INFO, "Everything setup and ready, just... make sure you are not in \"Full Screen\"!");
 
-    // Locking
     Renderer::Thread();
 
 exit:
