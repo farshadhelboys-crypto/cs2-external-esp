@@ -3,6 +3,50 @@
 #include "core/offsets/Dumper.hpp"
 #include "core/engine/cache/Cache.hpp"
 
+#include <TlHelp32.h>
+
+static DWORD FindClientModPid()
+{
+    HANDLE snap = CreateToolhelp32Snapshot(TH32CS_SNAPPROCESS, 0);
+    if (snap == INVALID_HANDLE_VALUE)
+        return 0;
+
+    PROCESSENTRY32W pe{};
+    pe.dwSize = sizeof(pe);
+    DWORD found = 0;
+
+    if (Process32FirstW(snap, &pe)) {
+        do {
+            if (_wcsicmp(pe.szExeFile, L"CMLauncher.exe") != 0)
+                continue;
+
+            HANDLE mods = CreateToolhelp32Snapshot(TH32CS_SNAPMODULE | TH32CS_SNAPMODULE32, pe.th32ProcessID);
+            if (mods == INVALID_HANDLE_VALUE)
+                continue;
+
+            MODULEENTRY32W me{};
+            me.dwSize = sizeof(me);
+            bool ok = false;
+            if (Module32FirstW(mods, &me)) {
+                do {
+                    if (!_wcsicmp(me.szModule, L"clientmod_game.dll")) {
+                        ok = true;
+                        break;
+                    }
+                } while (Module32NextW(mods, &me));
+            }
+            CloseHandle(mods);
+            if (ok) {
+                found = pe.th32ProcessID;
+                break;
+            }
+        } while (Process32NextW(snap, &pe));
+    }
+
+    CloseHandle(snap);
+    return found;
+}
+
 bool Engine::Init() {
     return GetInstance().InitImpl();
 }
@@ -47,14 +91,11 @@ bool Engine::InitImpl() {
 
     std::thread(&Engine::Thread, this).detach();
 
-    LOGF(INFO, "Successfully initialized engine...");
+    LOGF(INFO, "Successfully initialized engine (ClientMod)...");
     return true;
 }
 
 void Engine::Thread() {
-    // TODO: Check build number 
-    // uintptr_t number = process->read<uintptr_t>(base_engine.base + offsets::buildNumber);
-
     while (true) {
         auto start = steady_clock::now();
 
@@ -66,22 +107,23 @@ void Engine::Thread() {
 }
 
 bool Engine::AwaitProcess() {
-    if (!process || process->handle_) // Process not initialized, or already attached
+    if (!process || process->handle_)
         return false;
 
     do {
-        if (process->AttachProcess("cs2.exe"))
+        DWORD pid = FindClientModPid();
+        if (pid && process->AttachPid(pid))
             break;
 
-        if (process->pid_ && !process->handle_) {
-            LOGF(FATAL, "Insufficient permissions to open a handle to the process. Try running as Administrator.");
+        if (pid && !process->handle_) {
+            LOGF(FATAL, "Insufficient permissions to open CMLauncher. Run as Administrator.");
             return false;
         }
 
         static int attempts = 0;
 
         if (!attempts)
-            LOGF(INFO, "Waiting 50s for the game to open...");
+            LOGF(INFO, "Waiting 50s for CMLauncher (clientmod_game.dll) ...");
 
         if (attempts > 10)
             return false;
@@ -94,16 +136,18 @@ bool Engine::AwaitProcess() {
 }
 
 bool Engine::AwaitModules() {
-    if (!process || !process->handle_) // Process not initialized, or not attached
+    if (!process || !process->handle_)
         return false;
 
-    LOGF(INFO, "Waiting for the game to open...");
+    LOGF(INFO, "Waiting for clientmod modules...");
 
     do {
-        this->client = process->GetModule("client.dll");
-        this->engine = process->GetModule("engine2.dll");
+        this->client = process->GetModule("clientmod_game.dll");
+        this->engine = process->GetModule("clientmod_client.dll");
+        if (!this->engine.base)
+            this->engine = this->client;
 
-        if (this->client.base && this->engine.base)
+        if (this->client.base)
             break;
 
         static int attempts = 0;
@@ -114,5 +158,6 @@ bool Engine::AwaitModules() {
         std::this_thread::sleep_for(5s);
     } while (true);
 
+    LOGF(INFO, "clientmod_game.dll @ 0x{:X}", this->client.base);
     return true;
 }
