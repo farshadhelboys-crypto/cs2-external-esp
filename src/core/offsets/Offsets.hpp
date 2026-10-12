@@ -1,5 +1,24 @@
 namespace offsets
 {
+	// ClientMod — clientmod_game.dll (CMLauncher)
+	namespace cm {
+		constexpr uint32_t pos_x = 0x242F510;
+		constexpr uint32_t pos_y = 0x242F514;
+		constexpr uint32_t pos_z = 0x242F518;
+		constexpr uint32_t yaw = 0x25982CC;
+		constexpr uint32_t pitch = 0x25982D0;
+		constexpr uint32_t player_res = 0x02478218;
+		constexpr uint32_t res_hp = 0x1270;
+		constexpr uint32_t res_team = 0x1128;
+		constexpr uint32_t res_name = 0x0CD4;
+		constexpr uint32_t player_array = 0x026B2364;
+		constexpr uint32_t matrix = 0; // built from yaw/pitch
+		constexpr uint32_t hp_ptr = 0x025278D4;
+		constexpr uint32_t hp_off1 = 0x4;
+		constexpr uint32_t hp_off2 = 0x100;
+		constexpr uint32_t renderer = 0;
+	}
+
 	// client.dll
 	inline DWORD entityList;
 	inline DWORD viewMatrix;
