@@ -39,6 +39,7 @@ public:
 
 public:
 	bool AttachProcess(const char* process_name);
+	bool AttachPid(DWORD pid);
 	bool AttachWindow(const char* window_name);
 	bool UpdateHWND();
 	void Close();
@@ -51,7 +52,7 @@ public:
 	uintptr_t     FindSignature(ProcessModule target_module, std::vector<uint8_t> signature);
 
 	template<class T>
-	uintptr_t ReadOffsetFromSignature(std::vector<uint8_t> signature, uint8_t offset) // offset example: "FF 05 ->22628B01<-" offset is 2
+	uintptr_t ReadOffsetFromSignature(std::vector<uint8_t> signature, uint8_t offset)
 	{
 		uintptr_t pattern_address = this->FindSignature(signature);
 		if (!pattern_address)
@@ -68,7 +69,7 @@ public:
 
 		NTSTATUS status = cMemory.pfnNtReadVirtualMemory(this->handle_, (PVOID)(address), buffer, static_cast<ULONG>(size), (PULONG)&bytesRead);
 	
-		return status == 0x00000000/*STATUS_SUCCESS*/ || bytesRead == size;
+		return status == 0x00000000 || bytesRead == size;
 	}
 
 	template<class T>
