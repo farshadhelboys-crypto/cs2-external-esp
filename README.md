@@ -1,18 +1,21 @@
 # ClientMod ESP (این فورک)
 
-ابزار قابل اجرای **همین بازی** (CMLauncher / clientmod_game.dll) فایل پایتون است، نه باینری CS2.
+این فورک برای **CMLauncher / clientmod_game.dll** تنظیم شده.
 
-- اسکریپت: [`python/clientmod_esp.py`](python/clientmod_esp.py)
-- افست‌ها: PlayerResource، موقعیت خودت، yaw/pitch، آرایه بازیکن `0x26B2364`، زنجیره HP کلاینت
-- رابط: اتصال، انتخاب خودت، اسکن، ESP، اسلایدر کالیبره (FOV / EyeZ / قد / متر / Yaw / Pitch)
+## EXE (C++ / اورلی روی بازی)
 
-```bat
-python clientmod_esp.py
-```
+- پروسه: `CMLauncher.exe` که `clientmod_game.dll` دارد
+- منوی ImGui همان پروژه (باکس، HP، اسم، کالیبره FOV/EyeZ/Yaw/Pitch)
+- ماتریس از yaw/pitch + موقعیت خودت ساخته می‌شود
+- بازیکن‌ها از PlayerResource + آرایه `0x26B2364`
 
-باید **Run as administrator** باشد و بازی داخل مپ باشد. حالت پیش‌فرض `W2S=cam` و `Players=both`.
+ساخت: Actions → آخرین بیلد Release، یا Visual Studio `x64 | Release`.
 
-کد C++ پایین همین ریپو مخصوص Counter-Strike 2 است و با عوض کردن چند عدد افست روی کلاینت‌مود اجرا نمی‌شود. برای این بازی از پایتون بالا استفاده کن.
+**Run as Administrator** · بازی Windowed / Borderless · داخل مپ
+
+## پایتون (تست)
+
+[`python/clientmod_esp.py`](python/clientmod_esp.py)
 
 ---
 
@@ -60,7 +63,7 @@ Simple external ESP for Counter-Strike 2. After years of development the codebas
 
 > - This project is mirrored in the following locations.
 >	 - **GitHub**: [*github.com/IMXNOOBX/cs2-external-esp*](https://github.com/IMXNOOBX/cs2-external-esp) (main)
-> 	 - **GitLab**: [*gitlab.com/IMXNOOBX/cs2-external-esp*](https://gitlab.com/IMXNOOBX/cs2-external-esp) (mirror)
+>	 - **GitLab**: [*gitlab.com/IMXNOOBX/cs2-external-esp*](https://gitlab.com/IMXNOOBX/cs2-external-esp) (mirror)
 >	 - **CodeBerg**: [*codeberg.org/IMXNOOBX/cs2-external-esp*](https://codeberg.org/IMXNOOBX/cs2-external-esp) (mirror)
 
 1. Clone repository. Make sure you copy the command below to clone dependencies too
@@ -75,27 +78,3 @@ git clone --recursive https://github.com/IMXNOOBX/cs2-external-esp
 	- Build: **`x64 - Release`**
 
 3. Locate your binary file in the folder `<arch>/<configuration>`, e.g., `x64/Release`.
-
-## 💫 Credits
-
-* All [contributors](https://github.com/IMXNOOBX/cs2-external-esp/graphs/contributors) who have helped improve the project!
-* [**a2x**](https://github.com/a2x) for his [offset dumper](https://github.com/a2x/cs2-dumper) and constant updates to it!
-
-## 🔖 License & Copyright
-
-This project is licensed under [**CC BY-NC 4.0**](https://creativecommons.org/licenses/by-nc/4.0/).
-
-```diff
-+ You are free to:
-	• Share: Copy and redistribute the material in any medium or format.
-	• Adapt: Remix, transform, and build upon the material.
-+ Under the following terms:
-	• Attribution: You must give appropriate credit, provide a link to the original source repository, and indicate if changes were made.
-	• Non-Commercial: You may not use the material for commercial purposes.
-- You are not allowed to:
-	• Sell: This license forbids selling original or modified material for commercial purposes.
-	• Sublicense: This license forbids sublicensing original or modified material.
-```
-
-### ©️ Copyright
-The content of this project is ©️ by [IMXNOOBX](https://github.com/IMXNOOBX) and the respective contributors. See the [LICENSE.md](LICENSE) file for details.
