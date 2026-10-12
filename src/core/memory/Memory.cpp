@@ -54,7 +54,7 @@ HWND pProcess::GetWindowHandleFromProcessId(DWORD ProcessId) {
 			}
 		}
 	} while (hwnd != NULL);
-	return NULL; // No main window found for the given process ID
+	return NULL;
 }
 
   bool pProcess::AttachProcess(const char* ProcessName)
@@ -128,13 +128,22 @@ ProcessModule pProcess::GetModule(const char* lModule)
 		MultiByteToWideChar(CP_UTF8, 0, lModule, -1, &wideModule[0], wideCharLength);
 	}
 
-	HANDLE handle_module = CreateToolhelp32Snapshot(TH32CS_SNAPMODULE, pid_);
+	// SNAPMODULE32 required for 32-bit modules from a 64-bit process
+	HANDLE handle_module = CreateToolhelp32Snapshot(TH32CS_SNAPMODULE | TH32CS_SNAPMODULE32, pid_);
+	if (handle_module == INVALID_HANDLE_VALUE)
+		return { 0, 0 };
+
 	MODULEENTRY32W module_entry_{};
 	module_entry_.dwSize = sizeof(MODULEENTRY32W);
 
+	if (!Module32FirstW(handle_module, &module_entry_)) {
+		CloseHandle(handle_module);
+		return { 0, 0 };
+	}
+
 	do
 	{
-		if (!wcscmp(module_entry_.szModule, wideModule.c_str()))
+		if (!_wcsicmp(module_entry_.szModule, wideModule.c_str()))
 		{
 			CloseHandle(handle_module);
 			return { (DWORD_PTR)module_entry_.modBaseAddr, module_entry_.dwSize };
