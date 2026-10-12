@@ -11,22 +11,18 @@ bool Player::Update() {
 		return false;
 
 	if (!GetController()) {
-		//LOGF(WARNING, "Failed to GET controller for entity index({})", index);
 		return false;
 	}
 
 	if (!GetPawn()) {
-		//LOGF(WARNING, "Failed to GET pawn for entity index({})", index);
 		return false;
 	}
 
 	if (!UpdateController()) {
-		//LOGF(WARNING, "Failed to UPDATE controller for entity index({})", index);
 		return false;
 	}
 
 	if (!UpdatePawn()) {
-		//LOGF(WARNING, "Failed to UPDATE pawn for entity index({})", index);
 		return false;
 	}
 
@@ -37,7 +33,7 @@ bool Player::GetController() {
 	auto p = Engine::GetProcess();
 	auto client = Engine::GetClient();
 
-	this->controller = p->read<DWORD64>(list_entry + (index + 1) * 0x70); // before was 0x78
+	this->controller = p->read<DWORD64>(list_entry + (index + 1) * 0x70);
 
 	return this->controller != 0;
 }
@@ -58,7 +54,7 @@ bool Player::GetPawn() {
 	if (!entity_pawn_list_entry)
 		return false;
 
-	this->pawn = p->read<uintptr_t>(entity_pawn_list_entry + 0x70 * (entity_pawn_address & 0x1FF)); /*0x78*/
+	this->pawn = p->read<uintptr_t>(entity_pawn_list_entry + 0x70 * (entity_pawn_address & 0x1FF));
 
 	return this->pawn != 0;
 }
@@ -69,7 +65,6 @@ bool Player::UpdateController() {
 	this->steam_id = p->read<uint64_t>(controller + offsets::controller::m_steamID);
 	this->bot = this->steam_id == 0;
 
-	// expensive
 	if (!p->read_raw(controller + offsets::controller::m_iszPlayerName, this->name, sizeof(this->name)))
 		return false;
 
@@ -98,7 +93,7 @@ bool Player::UpdatePawn() {
 
 	UpdateObserverServices();
 
-	if (!alive) // No need to continue 
+	if (!alive)
 		return true;
 
 	this->pos = p->read<Vec3_t>(pawn + offsets::pawn::m_vOldOrigin);
@@ -121,12 +116,9 @@ bool Player::UpdatePawn() {
 		return false;
 	}
 
-	// Shows errors when player just respawned
 	if (!UpdateWeapon()) {
-		//LOGF(FATAL, "Failed to update weapon"); // too verbose
 		return false;
 	}
-
 
 	return true;
 }
@@ -182,16 +174,11 @@ bool Player::GetBounds(view_matrix_t matrix, Vec2_t size, std::pair<Vec2_t, Vec2
 	Vec2_t origin;
 	bool pt1 = matrix.wts(this->pos, size, origin);
 
-
 	Vec3_t pos_top;
 	if (this->bone_list.empty())
-		pos_top = this->pos + Vec3_t(0, 0, 65.f); // 75.f
+		pos_top = this->pos + Vec3_t(0, 0, cfg::cm::height);
 	else
 		pos_top = this->bone_list[bone_index::head].pos;
-
-	//auto head_bone = this->bone_list[bone_index::head];
-	//head_bone.pos.z *= 1.09; // little offset to cover the entire head
-	//bone_pos head_bone = origin + ImVec3
 
 	Vec2_t top;
 	bool pt2 = matrix.wts(pos_top, size, top);
@@ -204,13 +191,11 @@ bool Player::GetBounds(view_matrix_t matrix, Vec2_t size, std::pair<Vec2_t, Vec2
 
 	top.y -= width / 4;
 
-	// Top to bottom
 	bounds = { top, origin };
 
 	return pt1 || pt2;
 }
 
-// Does not update if match is started
 bool Player::UpdateObserverServices() {
 	auto p = Engine::GetProcess();
 	if (!p) 
