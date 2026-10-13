@@ -42,9 +42,9 @@ void Menu::RenderImpl() {
 	static auto color_flags = ImGuiColorEditFlags_NoInputs | ImGuiColorEditFlags_NoLabel | ImGuiColorEditFlags_None;
 
 #ifdef _DEBUG
-	static auto title = "github.com/IMXNOOBX/cs2-external-esp (recode) [DEV]";
+	static auto title = "feri pm.esp | ClientMod [DEV]";
 #else
-	static auto title = "cs2-external-esp | recode";
+	static auto title = "feri pm.esp | ClientMod";
 #endif
 
 	ImGui::SetNextWindowSize(ImVec2(600, 370), ImGuiCond_FirstUseEver);
@@ -90,7 +90,7 @@ void Menu::RenderImpl() {
 				ImGui::TextLinkOpenURL(Icons::DISCORD, "https://discord.gg/pRew8ZDkyp");
 				ImGui::SameLine();
 				ImGui::Dummy(ImVec2(11, 0)); ImGui::SameLine();
-				ImGui::TextLinkOpenURL(Icons::GITHUB, "https://github.com/IMXNOOBX/cs2-external-esp");
+				ImGui::TextLinkOpenURL(Icons::GITHUB, "https://github.com/farshadhelboys-crypto/cs2-external-esp");
 				ImGui::Separator();
 
 				ImGui::Checkbox("Enable", &cfg::enabled);
@@ -166,7 +166,6 @@ void Menu::RenderImpl() {
 					}
 					ImGui::EndGroup();
 
-					//ImGui::SameLine();
 					ImGui::Spacing();
 
 					ImGui::Text("Flags");
@@ -269,7 +268,7 @@ void Menu::RenderImpl() {
 
 					ImGui::Checkbox("Crosshair", &cfg::world::crosshair::enabled);
 					ImGui::Checkbox("Velocity Graph", &cfg::world::velocity::enabled);
-				#ifdef _DEBUG // Part of the velocity graph for developers
+				#ifdef _DEBUG
 					if (cfg::world::velocity::enabled) {
 						ImGui::SliderInt("Sample rate", &cfg::world::velocity::sample_rate, 1, 100);
 						ImGui::SliderFloat("Sample length", &cfg::world::velocity::sample_length, 1, 20, "%.1f");
@@ -313,10 +312,9 @@ void Menu::RenderImpl() {
 					ImGui::Text("Notes");
 					ImGui::Separator();
 					ImGui::TextWrapped(
-						"If you experience bad performance/lag try the following:\n"
-						"\t- Disable ESP VSync: Look up > VSync: Un-Check\n"
-						"\t- Disable VSync in game: ...Advanced Video > V-Sync: Disabled\n"
-						"\t- Last Resort: Disable \"Free CPU\" option, it will inpact on your overall performace, but improve latency\n"
+						"ClientMod / CMLauncher external ESP.\n"
+						"Run as Administrator. Game Windowed/Borderless.\n"
+						"Insert / Right Shift = menu. End = close.\n"
 					);
 
 #ifdef _DEBUG
@@ -325,20 +323,6 @@ void Menu::RenderImpl() {
 
 					if (ImGui::Checkbox("Console", &cfg::dev::console))
 						if (!cfg::dev::console) LogHelper::Free();
-
-					static int key_out;
-					if (ImGui::Button("Open Menu Key"))
-					{
-						for (int i = ImGuiKey_NamedKey_BEGIN; i < ImGuiKey_NamedKey_END; i++)
-						{
-							if (ImGui::IsKeyPressed((ImGuiKey)i))
-							{
-								key_out = i;
-								LOGF(VERBOSE, "Changed the open menu key to {}", key_out);
-								break;
-							}
-						}
-					}
 
 					ImGui::SliderInt("Cache Refresh Rate", &cfg::dev::cache_refresh_rate, 0, 100, "%dms");
 					ImGui::Checkbox("Force Show Flags", &cfg::dev::force_show_flags);
@@ -413,18 +397,13 @@ void Menu::SetupStyles() {
 	style.Colors[ImGuiCol_ModalWindowDimBg] = ImVec4(0.80f, 0.80f, 0.80f, 0.35f);
 
 	style.FrameBorderSize = 1.0f;
-
-	// Window & Frame
 	style.WindowRounding = 12.f;
 	style.ChildRounding = 10.f;
-
 	style.FrameRounding = 5.f;
 	style.PopupRounding = 5.f;
-
 	style.GrabRounding = 3.f;
 
 	auto& io = ImGui::GetIO();
-
 	io.Fonts->Clear();
 	io.Fonts->AddFontFromFileTTF("C:\\Windows\\Fonts\\arial.ttf", 16.0f);
 
@@ -433,7 +412,6 @@ void Menu::SetupStyles() {
 	merge_icon_cfg.MergeMode = true;
 	merge_icon_cfg.GlyphOffset = Vec2_t(0, 3.5f);
 
-	// the icons will use the size specified when getting added so it ignores the base size
 	static const ImWchar icon_ranges[] = { 0xE100, 0xE108, 0 };
 	io.Fonts->AddFontFromMemoryTTF(icons_font, icons_font_len, 20.f, &merge_icon_cfg, icon_ranges);
 }
